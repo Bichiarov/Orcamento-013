@@ -3,25 +3,21 @@ const catalog = [
   { name: 'Gestão Business', price: 320 },
   { name: 'Gestão Professional', price: 450 },
   { name: 'PDV adicional', price: 65 },
+  { name: 'Mobile', price: 35 },
   { name: 'Comanda eletrônica', price: 35 },
   { name: 'Comanda eletrônica Pagamentos Getnet/Stone', price: 50 },
   { name: 'Microterminal', price: 35 },
-
+  { name: 'Kitchen Display System', price: 50 },
   { name: 'Integração iFood por MerchantID', price: 65 },
   { name: 'Integração Rappi por MerchantID', price: 65 },
   { name: 'Integração Open Delivery por MerchantID', price: 65 },
-
   { name: 'Totem de Autoatendimento', price: 150 },
-  { name: 'Kitchen Display System', price: 50 },
   { name: 'Integração Cardápio Digital Goomer', price: 100 },
-
   { name: 'API de Dados por loja', price: 60 },
   { name: 'Painel de Senha', price: 35 },
   { name: 'TEF 1ª Licença', price: 130 },
   { name: 'TEF adicional', price: 50 },
-
-  { name: 'Swnow / SW Delivery Ilimitado', price: 500 },
-
+  { name: 'SW Delivery Ilimitado / Swnow', price: 500 },
   { name: 'SW Engajamento Start', price: 110 },
   { name: 'SW Engajamento Business', price: 235 }
 ];
@@ -47,11 +43,8 @@ const els = {
   implantacaoLine: document.querySelector('#implantacaoLine'),
   implantacaoTotal: document.querySelector('#implantacaoTotal'),
   btnPrint: document.querySelector('#btnPrint'),
-  btnPrintTop: document.querySelector('#btnPrintTop'),
   btnWhats: document.querySelector('#btnWhats'),
-  btnWhatsTop: document.querySelector('#btnWhatsTop'),
-  btnSave: document.querySelector('#btnSave'),
-  btnRemoveSelected: document.querySelector('#btnRemoveSelected')
+  btnRemoveLast: document.querySelector('#btnRemoveLast')
 };
 
 let quote = {
@@ -85,11 +78,6 @@ function populateCatalog(){
   });
 }
 
-function addItem(item){
-  quote.items.push(item);
-  render();
-}
-
 function getClient(){
   return (els.clientName.value.trim() || 'A DEFINIR').toUpperCase();
 }
@@ -100,40 +88,35 @@ function hasDiscount(){
 
 function updateItemLock(){
   const locked = hasDiscount();
+  [els.catalogItem, els.itemQty, els.customDesc, els.customValue, els.addItem, els.addImplantacao].forEach(el => {
+    el.disabled = locked;
+    el.classList.toggle('locked', locked);
+  });
+  els.addItem.textContent = locked ? 'Itens bloqueados' : 'Adicionar item';
+}
 
-  els.catalogItem.disabled = locked;
-  els.itemQty.disabled = locked;
-  els.customDesc.disabled = locked;
-  els.customValue.disabled = locked;
-  els.addItem.disabled = locked;
-  els.addImplantacao.disabled = locked;
-
-  els.addItem.textContent = locked ? 'Itens bloqueados após desconto' : 'Adicionar item';
-  els.addImplantacao.textContent = locked ? 'Implantação bloqueada após desconto' : 'Adicionar implantação R$ 900,00';
-
-  [els.catalogItem, els.itemQty, els.customDesc, els.customValue, els.addItem, els.addImplantacao]
-    .forEach(el => el.classList.toggle('locked', locked));
+function addItem(item){
+  quote.items.push(item);
+  render();
 }
 
 function addCatalogItem(){
   if(hasDiscount()){
-    alert('Após adicionar desconto, a inserção de novos itens fica bloqueada. Remova o desconto ou limpe o orçamento para alterar os itens.');
+    alert('Após adicionar desconto, a inserção de novos itens fica bloqueada.');
     return;
   }
+
   const qty = Math.max(1, Number(els.itemQty.value || 1));
+  const selected = catalog[Number(els.catalogItem.value)];
   const customDesc = els.customDesc.value.trim();
   const customValue = Number(els.customValue.value);
-  let desc = customDesc;
-  let price = Number.isFinite(customValue) && customValue > 0 ? customValue : null;
+
+  let desc = customDesc || (selected ? selected.name : '');
+  let price = Number.isFinite(customValue) && customValue > 0 ? customValue : (selected ? selected.price : null);
 
   if(!desc || price === null){
-    const selected = catalog[Number(els.catalogItem.value)];
-    if(!selected && (!desc || price === null)){
-      alert('Selecione um item da tabela ou preencha descrição e valor personalizados.');
-      return;
-    }
-    desc = desc || selected.name;
-    price = price ?? selected.price;
+    alert('Selecione um item da tabela ou preencha descrição e valor personalizados.');
+    return;
   }
 
   addItem({
@@ -142,7 +125,7 @@ function addCatalogItem(){
     qty,
     unit: price,
     total: qty * price,
-    type: desc.toLowerCase().includes('implantação') ? 'implantacao' : 'item'
+    type: 'item'
   });
 
   els.customDesc.value = '';
@@ -152,9 +135,10 @@ function addCatalogItem(){
 
 function addImplantacao(){
   if(hasDiscount()){
-    alert('Após adicionar desconto, a inserção de novos itens fica bloqueada. Remova o desconto ou limpe o orçamento para alterar os itens.');
+    alert('Após adicionar desconto, a inserção de novos itens fica bloqueada.');
     return;
   }
+
   addItem({
     store: '',
     description: 'Implantação',
@@ -172,6 +156,7 @@ function addDiscount(){
     alert('Informe o valor do desconto.');
     return;
   }
+
   addItem({
     store: '',
     description: desc,
@@ -180,6 +165,7 @@ function addDiscount(){
     total: -Math.abs(value),
     type: 'discount'
   });
+
   els.discountDesc.value = '';
   els.discountValue.value = '';
 }
@@ -190,7 +176,7 @@ function defaultNotes(){
 
   const groups = {};
   quote.items.filter(i => i.type === 'item').forEach(i => {
-    groups[i.description] = (groups[i.description] || { qty: 0, unit: i.unit }) ;
+    groups[i.description] = (groups[i.description] || { qty: 0, unit: i.unit });
     groups[i.description].qty += i.qty;
   });
 
@@ -200,12 +186,11 @@ function defaultNotes(){
     }
   });
 
-  const hasImplantacao = quote.items.some(i => i.type === 'implantacao');
   const implantationDiscount = quote.items
     .filter(i => i.type === 'discount' && i.description.toLowerCase().includes('implant'))
     .reduce((sum, i) => sum + Math.abs(i.total), 0);
 
-  if(hasImplantacao && implantationDiscount > 0){
+  if(quote.items.some(i => i.type === 'implantacao') && implantationDiscount > 0){
     notes.push(`Implantação com desconto de ${money(implantationDiscount)}.`);
   }
 
@@ -213,7 +198,6 @@ function defaultNotes(){
     notes.push(`${i.description} aplicado no valor de ${money(Math.abs(i.total))}.`);
   });
 
-  notes.push('Orçamento válido por 5 dias úteis.');
   return notes;
 }
 
@@ -235,6 +219,7 @@ function render(){
   quote.items.forEach(item => {
     const tr = document.createElement('tr');
     if(item.type === 'discount') tr.className = 'discount';
+    if(item.type === 'implantacao') tr.className = 'implantacao';
     tr.innerHTML = `
       <td>${item.store || ''}</td>
       <td>${item.description}</td>
@@ -309,25 +294,7 @@ function whatsappText(){
 }
 
 function shareWhatsapp(){
-  const text = encodeURIComponent(whatsappText());
-  window.open(`https://wa.me/?text=${text}`, '_blank');
-}
-
-function saveLocal(){
-  localStorage.setItem('orcamento013_ultimo', JSON.stringify(quote));
-  alert('Orçamento salvo no navegador. Ao abrir a página novamente, o orçamento iniciará zerado conforme configuração atual.');
-}
-
-function loadLocal(){
-  const saved = localStorage.getItem('orcamento013_ultimo');
-  if(!saved) return;
-  try{
-    const data = JSON.parse(saved);
-    quote.items = Array.isArray(data.items) ? data.items : [];
-    els.clientName.value = data.client || '';
-    els.quoteDate.value = data.date || todayISO();
-    els.extraNotes.value = data.notes || '';
-  }catch(e){}
+  window.open(`https://wa.me/?text=${encodeURIComponent(whatsappText())}`, '_blank');
 }
 
 function clearQuote(){
@@ -348,39 +315,40 @@ function bind(){
     els.quoteDate.addEventListener(evt, render);
     els.extraNotes.addEventListener(evt, render);
   });
+
   els.addItem.addEventListener('click', addCatalogItem);
   els.addImplantacao.addEventListener('click', addImplantacao);
   els.addDiscount.addEventListener('click', addDiscount);
   els.clearQuote.addEventListener('click', clearQuote);
-  const printQuote = () => {
+  els.btnWhats.addEventListener('click', shareWhatsapp);
+  els.btnPrint.addEventListener('click', () => {
     render();
     window.scrollTo(0, 0);
-    setTimeout(() => window.print(), 150);
-  };
-  els.btnPrint.addEventListener('click', printQuote);
-  els.btnPrintTop.addEventListener('click', printQuote);
-  els.btnWhats.addEventListener('click', shareWhatsapp);
-  els.btnWhatsTop.addEventListener('click', shareWhatsapp);
-  els.btnSave.addEventListener('click', saveLocal);
-  els.btnRemoveSelected.addEventListener('click', () => {
+    setTimeout(() => window.print(), 120);
+  });
+  els.btnRemoveLast.addEventListener('click', () => {
     quote.items.pop();
     render();
   });
 }
 
 function init(){
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations()
+      .then(registrations => registrations.forEach(registration => registration.unregister()))
+      .catch(() => {});
+  }
+  if(window.caches){
+    caches.keys().then(keys => keys.forEach(key => caches.delete(key))).catch(() => {});
+  }
+
   populateCatalog();
-  els.quoteDate.value = todayISO();
-  localStorage.removeItem('orcamento013_ultimo');
   quote.items = [];
   els.clientName.value = '';
   els.extraNotes.value = '';
+  els.quoteDate.value = todayISO();
   bind();
   render();
-
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('./service-worker.js').catch(() => {});
-  }
 }
 
 init();

@@ -5,36 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>013 Automação | Orçamentos</title>
   <meta name="theme-color" content="#05070a" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=7" />
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark logo-holder"><img src="assets/img/logo-013.png" alt="Logo 013 Automação" /></div>
-        <div>
-          <h1>Orçamentos 013</h1>
-          <p>Automação comercial com padrão visual profissional</p>
-        </div>
-      </div>
-      <div class="top-actions">
-        <button class="btn ghost" id="btnPrintTop">Gerar PDF</button>
-        <button class="btn primary" id="btnWhatsTop">WhatsApp</button>
-      </div>
+      <img class="main-logo" src="assets/img/logo-013-oficial.png" alt="013 Automação Comercial" />
     </header>
 
     <main class="layout">
       <section class="panel editor">
         <div class="section-title">
-          <h2>Novo orçamento</h2>
-          <p>Preencha os dados e o orçamento será atualizado automaticamente.</p>
+          <h1>Novo orçamento</h1>
+          <p>Preencha os dados, escolha os produtos e gere o orçamento no padrão oficial da 013 Automação.</p>
         </div>
 
         <div class="grid two">
           <label>
             Cliente / Loja
-            <input id="clientName" type="text" placeholder="Ex.: Zé dos Espetinhos" />
+            <input id="clientName" type="text" placeholder="Nome do cliente" />
           </label>
           <label>
             Data
@@ -58,7 +50,7 @@
         <div class="grid two">
           <label>
             Descrição personalizada
-            <input id="customDesc" type="text" placeholder="Opcional: nome personalizado do item" />
+            <input id="customDesc" type="text" placeholder="Opcional" />
           </label>
           <label>
             Valor unitário personalizado
@@ -66,7 +58,7 @@
           </label>
         </div>
 
-        <div class="button-row">
+        <div class="button-row item-actions">
           <button class="btn primary" id="addItem">Adicionar item</button>
           <button class="btn muted" id="addImplantacao">Adicionar implantação R$ 900,00</button>
         </div>
@@ -74,8 +66,8 @@
         <div class="divider"></div>
 
         <div class="section-title small">
-          <h3>Descontos</h3>
-          <p>Use para desconto de implantação, mobile bonificado ou desconto comercial.</p>
+          <h2>Descontos</h2>
+          <p>Após adicionar desconto, a inclusão de novos itens fica bloqueada.</p>
         </div>
 
         <div class="grid two">
@@ -89,7 +81,7 @@
           </label>
         </div>
 
-        <div class="button-row">
+        <div class="button-row discount-actions">
           <button class="btn muted" id="addDiscount">Adicionar desconto</button>
           <button class="btn danger" id="clearQuote">Limpar orçamento</button>
         </div>
@@ -98,29 +90,24 @@
 
         <label>
           Observações adicionais
-          <textarea id="extraNotes" rows="4" placeholder="Observações que devem aparecer no orçamento"></textarea>
+          <textarea id="extraNotes" rows="4" placeholder="Observações extras para este orçamento"></textarea>
         </label>
 
-        <div class="button-row sticky-actions">
+        <div class="button-row final-actions">
           <button class="btn primary" id="btnWhats">Compartilhar WhatsApp</button>
           <button class="btn ghost" id="btnPrint">Gerar PDF / Imprimir</button>
-          <button class="btn muted" id="btnSave">Salvar no navegador</button>
+          <button class="btn muted" id="btnRemoveLast">Remover último item</button>
         </div>
       </section>
 
       <section class="preview-wrap">
         <div class="preview-toolbar">
-          <span>Prévia do orçamento</span>
-          <button class="btn tiny" id="btnRemoveSelected">Remover último item</button>
+          <strong>Prévia do orçamento</strong>
+          <span>O PDF será gerado a partir desta visualização.</span>
         </div>
 
         <article id="quotePreview" class="quote-page">
-          <div class="quote-brand">
-            <div class="quote-logo"><img src="assets/img/logo-013.png" alt="Logo 013 Automação" /></div>
-          </div>
-
-          <h2>ORÇAMENTO COMERCIAL</h2>
-          <div class="title-line"></div>
+<h2>ORÇAMENTO COMERCIAL</h2>
           <p class="date-line">Data: <span id="pvDate"></span></p>
 
           <table class="quote-table">
@@ -162,12 +149,6 @@
     </main>
   </div>
 
-  <template id="emptyRowTemplate">
-    <tr class="empty-row">
-      <td colspan="5">Adicione itens ao orçamento.</td>
-    </tr>
-  </template>
-
-  <script src="assets/js/app.js"></script>
+  <script src="assets/js/app.js?v=7"></script>
 </body>
 </html>
