@@ -316,8 +316,13 @@ function bind(){
   els.addImplantacao.addEventListener('click', addImplantacao);
   els.addDiscount.addEventListener('click', addDiscount);
   els.clearQuote.addEventListener('click', clearQuote);
-  els.btnPrint.addEventListener('click', () => window.print());
-  els.btnPrintTop.addEventListener('click', () => window.print());
+  const printQuote = () => {
+    render();
+    window.scrollTo(0, 0);
+    setTimeout(() => window.print(), 150);
+  };
+  els.btnPrint.addEventListener('click', printQuote);
+  els.btnPrintTop.addEventListener('click', printQuote);
   els.btnWhats.addEventListener('click', shareWhatsapp);
   els.btnWhatsTop.addEventListener('click', shareWhatsapp);
   els.btnSave.addEventListener('click', saveLocal);

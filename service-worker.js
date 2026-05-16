@@ -1,9 +1,10 @@
-const CACHE_NAME = 'orcamentos-013-v1';
+const CACHE_NAME = 'orcamentos-013-modelo-marabar-print-v2';
 const ASSETS = [
   './',
   './index.html',
   './assets/css/styles.css',
   './assets/js/app.js',
+  './assets/img/timbrado-013.png',
   './manifest.json'
 ];
 
