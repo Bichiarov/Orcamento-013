@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orcamentos-013-pdv-abaixo-gestao-v12';
+const CACHE_NAME = 'orcamentos-013-inicia-zerado-v13';
 const ASSETS = [
   './',
   './index.html',

@@ -315,7 +315,7 @@ function shareWhatsapp(){
 
 function saveLocal(){
   localStorage.setItem('orcamento013_ultimo', JSON.stringify(quote));
-  alert('Orçamento salvo no navegador.');
+  alert('Orçamento salvo no navegador. Ao abrir a página novamente, o orçamento iniciará zerado conforme configuração atual.');
 }
 
 function loadLocal(){
@@ -371,7 +371,10 @@ function bind(){
 function init(){
   populateCatalog();
   els.quoteDate.value = todayISO();
-  loadLocal();
+  localStorage.removeItem('orcamento013_ultimo');
+  quote.items = [];
+  els.clientName.value = '';
+  els.extraNotes.value = '';
   bind();
   render();
 
