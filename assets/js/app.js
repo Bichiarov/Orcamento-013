@@ -416,7 +416,9 @@ async function shareWhatsapp(){
     const fileName = `${safeFileName(quote.client || els.clientName.value || 'cliente')}-orcamento-013.pdf`;
     const file = new File([blob], fileName, { type: 'application/pdf' });
 
-    if(navigator.canShare && navigator.canShare({ files: [file] })){
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if(isMobile && navigator.canShare && navigator.canShare({ files: [file] })){
       await navigator.share({
         title: 'Orçamento 013 Automação',
         text: 'Segue orçamento em PDF.',
@@ -429,15 +431,17 @@ async function shareWhatsapp(){
     const a = document.createElement('a');
     a.href = url;
     a.download = fileName;
+    document.body.appendChild(a);
     a.click();
-
-    alert('O PDF foi baixado. No computador, anexe o arquivo manualmente no WhatsApp Web. No Android, use o botão pelo navegador do celular para abrir o compartilhamento com o WhatsApp.');
+    a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 15000);
+
+    const mensagem = encodeURIComponent('Segue orçamento em PDF. O arquivo foi baixado no computador e deve ser anexado nesta conversa.');
+    window.open(`https://web.whatsapp.com/send?text=${mensagem}`, '_blank');
   }catch(error){
     alert(error.message || 'Não foi possível gerar o PDF para compartilhamento.');
   }
 }
-
 
 function clearQuote(){
   if(!confirm('Limpar este orçamento?')) return;
