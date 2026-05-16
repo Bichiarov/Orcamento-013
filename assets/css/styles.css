@@ -306,13 +306,7 @@ input:focus,select:focus,textarea:focus{
   display:block;
 }
 
-@media(max-width:1180px){
-  .layout{grid-template-columns:1fr}
-  .editor{position:relative;top:auto}
-  .quote-page{transform-origin:top center;transform:scale(.86);margin-bottom:-38mm}
-}
-@media(max-width:760px){
-  .app-shell{padding:12px}
+
   .topbar{align-items:flex-start;flex-direction:column}
   .grid.two{grid-template-columns:1fr}
   .top-actions,.button-row{width:100%}
@@ -320,6 +314,152 @@ input:focus,select:focus,textarea:focus{
   .quote-page{transform:scale(.48);margin-left:50%;translate:-50% 0;margin-bottom:-148mm}
 }
 
+
+
+@media(max-width:1180px){
+  body{
+    overflow-x:hidden;
+  }
+
+  .app-shell{
+    padding:14px;
+  }
+
+  .topbar{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .top-actions{
+    width:100%;
+  }
+
+  .top-actions .btn{
+    flex:1;
+  }
+
+  .layout{
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+
+  .editor{
+    position:relative;
+    top:auto;
+    width:100%;
+  }
+
+  .preview-wrap{
+    width:100%;
+    overflow-x:auto;
+    padding-bottom:16px;
+  }
+
+  .quote-page{
+    transform-origin:top left;
+    transform:scale(.78);
+    margin-left:0;
+    margin-bottom:-62mm;
+  }
+}
+
+@media(max-width:760px){
+  .app-shell{
+    padding:10px;
+  }
+
+  .topbar{
+    padding:14px;
+    border-radius:16px;
+  }
+
+  .brand{
+    align-items:flex-start;
+  }
+
+  .brand-mark{
+    width:52px;
+    height:52px;
+    border-radius:14px;
+    flex:0 0 auto;
+  }
+
+  .brand h1{
+    font-size:20px;
+  }
+
+  .brand p{
+    font-size:12px;
+  }
+
+  .grid.two{
+    grid-template-columns:1fr;
+  }
+
+  .button-row,
+  .top-actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  .btn{
+    width:100%;
+    min-height:44px;
+  }
+
+  input,
+  select,
+  textarea{
+    font-size:16px;
+    min-height:44px;
+  }
+
+  .panel{
+    padding:14px;
+    border-radius:16px;
+  }
+
+  .preview-toolbar{
+    align-items:flex-start;
+    gap:10px;
+    flex-direction:column;
+  }
+
+  .preview-toolbar .btn{
+    width:100%;
+  }
+
+  .preview-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    border-radius:16px;
+  }
+
+  .quote-page{
+    transform-origin:top left;
+    transform:scale(.46);
+    margin-left:0;
+    margin-bottom:-160mm;
+  }
+
+  .sticky-actions{
+    position:static;
+  }
+}
+
+@media(max-width:430px){
+  .quote-page{
+    transform:scale(.41);
+    margin-bottom:-176mm;
+  }
+}
+
+@media(max-width:380px){
+  .quote-page{
+    transform:scale(.36);
+    margin-bottom:-190mm;
+  }
+}
 
 @page{
   size:A4 portrait;

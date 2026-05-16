@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orcamentos-013-inicia-zerado-v13';
+const CACHE_NAME = 'orcamentos-013-responsivo-mobile-v14';
 const ASSETS = [
   './',
   './index.html',
