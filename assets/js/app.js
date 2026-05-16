@@ -434,12 +434,10 @@ async function shareWhatsapp(){
     document.body.appendChild(a);
     a.click();
     a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 15000);
 
-    const mensagem = encodeURIComponent('Segue orçamento em PDF. O arquivo foi baixado no computador e deve ser anexado nesta conversa.');
-    window.open(`https://web.whatsapp.com/send?text=${mensagem}`, '_blank');
+    setTimeout(() => URL.revokeObjectURL(url), 15000);
   }catch(error){
-    alert(error.message || 'Não foi possível gerar o PDF para compartilhamento.');
+    alert(error.message || 'Não foi possível gerar o PDF.');
   }
 }
 
