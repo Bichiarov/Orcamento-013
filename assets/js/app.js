@@ -293,9 +293,151 @@ function whatsappText(){
   return lines.join('\n');
 }
 
-function shareWhatsapp(){
-  window.open(`https://wa.me/?text=${encodeURIComponent(whatsappText())}`, '_blank');
+
+function safeFileName(name){
+  return (name || 'orcamento-013')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase() || 'orcamento-013';
 }
+
+function waitForImages(element){
+  const images = Array.from(element.querySelectorAll('img'));
+  return Promise.all(images.map(img => {
+    if(img.complete) return Promise.resolve();
+    return new Promise(resolve => {
+      img.onload = resolve;
+      img.onerror = resolve;
+    });
+  }));
+}
+
+async function urlToDataUrl(url){
+  const absoluteUrl = new URL(url, window.location.href).href;
+  const response = await fetch(absoluteUrl, { cache: 'no-store' });
+  const blob = await response.blob();
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function inlineImagesForPdf(element){
+  const images = Array.from(element.querySelectorAll('img'));
+
+  for(const img of images){
+    const src = img.getAttribute('src');
+    if(!src || src.startsWith('data:')) continue;
+
+    try{
+      img.crossOrigin = 'anonymous';
+      img.src = await urlToDataUrl(src);
+    }catch(error){
+      console.warn('Não foi possível converter imagem para Base64:', src, error);
+    }
+  }
+
+  const quotePage = element.classList.contains('quote-page') ? element : element.querySelector('.quote-page');
+  if(quotePage){
+    try{
+      const original = document.querySelector('#quotePreview');
+      const bg = getComputedStyle(original).backgroundImage;
+      const match = bg.match(/url\(["']?(.*?)["']?\)/);
+      if(match && match[1] && !match[1].startsWith('data:')){
+        const dataUrl = await urlToDataUrl(match[1]);
+        quotePage.style.backgroundImage = `url("${dataUrl}")`;
+        quotePage.style.backgroundSize = '210mm 297mm';
+        quotePage.style.backgroundPosition = 'center top';
+        quotePage.style.backgroundRepeat = 'no-repeat';
+      }
+    }catch(error){
+      console.warn('Não foi possível converter o timbrado para Base64:', error);
+    }
+  }
+
+  await waitForImages(element);
+}
+
+async function generatePdfBlob(){
+  if(!window.html2canvas || !window.jspdf){
+    throw new Error('Bibliotecas de PDF não carregadas. Verifique a conexão com a internet e tente novamente.');
+  }
+
+  render();
+
+  const source = document.querySelector('#quotePreview');
+  const clone = source.cloneNode(true);
+
+  clone.style.transform = 'none';
+  clone.style.margin = '0';
+  clone.style.position = 'fixed';
+  clone.style.left = '-10000px';
+  clone.style.top = '0';
+  clone.style.width = '210mm';
+  clone.style.height = '297mm';
+  clone.style.minHeight = '297mm';
+  clone.style.maxHeight = '297mm';
+  clone.style.boxShadow = 'none';
+  clone.style.overflow = 'hidden';
+
+  document.body.appendChild(clone);
+
+  await inlineImagesForPdf(clone);
+
+  const canvas = await html2canvas(clone, {
+    scale: 2,
+    useCORS: true,
+    allowTaint: false,
+    backgroundColor: '#ffffff',
+    scrollX: 0,
+    scrollY: 0,
+    windowWidth: clone.scrollWidth,
+    windowHeight: clone.scrollHeight
+  });
+
+  document.body.removeChild(clone);
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const imgData = canvas.toDataURL('image/jpeg', 0.98);
+
+  pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+  return pdf.output('blob');
+}
+
+async function shareWhatsapp(){
+  try{
+    const blob = await generatePdfBlob();
+    const fileName = `${safeFileName(quote.client || els.clientName.value || 'cliente')}-orcamento-013.pdf`;
+    const file = new File([blob], fileName, { type: 'application/pdf' });
+
+    if(navigator.canShare && navigator.canShare({ files: [file] })){
+      await navigator.share({
+        title: 'Orçamento 013 Automação',
+        text: 'Segue orçamento em PDF.',
+        files: [file]
+      });
+      return;
+    }
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.click();
+
+    alert('O PDF foi baixado. No computador, anexe o arquivo manualmente no WhatsApp Web. No Android, use o botão pelo navegador do celular para abrir o compartilhamento com o WhatsApp.');
+    setTimeout(() => URL.revokeObjectURL(url), 15000);
+  }catch(error){
+    alert(error.message || 'Não foi possível gerar o PDF para compartilhamento.');
+  }
+}
+
 
 function clearQuote(){
   if(!confirm('Limpar este orçamento?')) return;
