@@ -1,0 +1,10 @@
+{
+  "name": "Orçamentos 013 Automação",
+  "short_name": "Orçamentos 013",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#05070a",
+  "theme_color": "#05070a",
+  "description": "Aplicativo web para geração de orçamentos comerciais da 013 Automação.",
+  "icons": []
+}

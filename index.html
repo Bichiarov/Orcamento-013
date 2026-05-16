@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>013 Automação | Orçamentos</title>
+  <meta name="theme-color" content="#05070a" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark"><span>ZER</span><small>013</small></div>
+        <div>
+          <h1>Orçamentos 013</h1>
+          <p>Automação comercial com padrão visual profissional</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="btn ghost" id="btnPrintTop">Gerar PDF</button>
+        <button class="btn primary" id="btnWhatsTop">WhatsApp</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel editor">
+        <div class="section-title">
+          <h2>Novo orçamento</h2>
+          <p>Preencha os dados e o orçamento será atualizado automaticamente.</p>
+        </div>
+
+        <div class="grid two">
+          <label>
+            Cliente / Loja
+            <input id="clientName" type="text" placeholder="Ex.: Zé dos Espetinhos" />
+          </label>
+          <label>
+            Data
+            <input id="quoteDate" type="date" />
+          </label>
+        </div>
+
+        <div class="grid two">
+          <label>
+            Item da tabela 2025
+            <select id="catalogItem">
+              <option value="">Selecione um item</option>
+            </select>
+          </label>
+          <label>
+            Quantidade
+            <input id="itemQty" type="number" min="1" value="1" />
+          </label>
+        </div>
+
+        <div class="grid two">
+          <label>
+            Descrição personalizada
+            <input id="customDesc" type="text" placeholder="Opcional: nome personalizado do item" />
+          </label>
+          <label>
+            Valor unitário personalizado
+            <input id="customValue" type="number" min="0" step="0.01" placeholder="Opcional" />
+          </label>
+        </div>
+
+        <div class="button-row">
+          <button class="btn primary" id="addItem">Adicionar item</button>
+          <button class="btn muted" id="addImplantacao">Adicionar implantação R$ 900,00</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-title small">
+          <h3>Descontos</h3>
+          <p>Use para desconto de implantação, mobile bonificado ou desconto comercial.</p>
+        </div>
+
+        <div class="grid two">
+          <label>
+            Descrição do desconto
+            <input id="discountDesc" type="text" placeholder="Ex.: Desconto Implantação" />
+          </label>
+          <label>
+            Valor do desconto
+            <input id="discountValue" type="number" min="0" step="0.01" placeholder="Ex.: 450" />
+          </label>
+        </div>
+
+        <div class="button-row">
+          <button class="btn muted" id="addDiscount">Adicionar desconto</button>
+          <button class="btn danger" id="clearQuote">Limpar orçamento</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <label>
+          Observações adicionais
+          <textarea id="extraNotes" rows="4" placeholder="Observações que devem aparecer no orçamento"></textarea>
+        </label>
+
+        <div class="button-row sticky-actions">
+          <button class="btn primary" id="btnWhats">Compartilhar WhatsApp</button>
+          <button class="btn ghost" id="btnPrint">Gerar PDF / Imprimir</button>
+          <button class="btn muted" id="btnSave">Salvar no navegador</button>
+        </div>
+      </section>
+
+      <section class="preview-wrap">
+        <div class="preview-toolbar">
+          <span>Prévia do orçamento</span>
+          <button class="btn tiny" id="btnRemoveSelected">Remover último item</button>
+        </div>
+
+        <article id="quotePreview" class="quote-page">
+          <div class="quote-brand">
+            <div class="quote-logo"><span>ZER</span><em>AUTOMAÇÃO COMERCIAL</em></div>
+          </div>
+
+          <h2>ORÇAMENTO COMERCIAL</h2>
+          <div class="title-line"></div>
+          <p class="date-line">Data: <span id="pvDate"></span></p>
+
+          <table class="quote-table">
+            <thead>
+              <tr>
+                <th>Loja</th>
+                <th>Descrição</th>
+                <th>Qtde</th>
+                <th>Valor unit.</th>
+                <th>Valor total</th>
+              </tr>
+            </thead>
+            <tbody id="quoteRows"></tbody>
+          </table>
+
+          <div id="implantacaoLine" class="implantacao-line hidden">
+            <strong>Total implantação:</strong>
+            <span id="implantacaoTotal">R$ 0,00</span>
+          </div>
+
+          <div class="total-box">
+            <strong>TOTAL</strong>
+            <span id="quoteTotal">R$ 0,00</span>
+          </div>
+
+          <div class="notes">
+            <strong>Observações:</strong>
+            <ul id="notesList"></ul>
+          </div>
+
+          <footer class="quote-footer">
+            <strong>013 Automação Comercial</strong>
+            <span>Alex: (13) 98822-9261 | Rafael: (13) 98821-5842</span>
+            <span>Alex: suporte@013automacao.com.br | Rafael: comercial@013automacao.com.br</span>
+            <span>www.013automacao.com.br</span>
+          </footer>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <template id="emptyRowTemplate">
+    <tr class="empty-row">
+      <td colspan="5">Adicione itens ao orçamento.</td>
+    </tr>
+  </template>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
