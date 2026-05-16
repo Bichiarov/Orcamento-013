@@ -3,21 +3,27 @@ const catalog = [
   { name: 'Gestão Business', price: 320 },
   { name: 'Gestão Professional', price: 450 },
   { name: 'PDV adicional', price: 65 },
-  { name: 'Mobile', price: 35 },
-  { name: 'Microterminal', price: 35 },
   { name: 'Comanda eletrônica', price: 35 },
-  { name: 'Terminal de Lançamento', price: 35 },
-  { name: 'Kitchen Display System', price: 50 },
+  { name: 'Comanda eletrônica Pagamentos Getnet/Stone', price: 50 },
+  { name: 'Microterminal', price: 35 },
+
   { name: 'Integração iFood por MerchantID', price: 65 },
   { name: 'Integração Rappi por MerchantID', price: 65 },
   { name: 'Integração Open Delivery por MerchantID', price: 65 },
-  { name: 'Swnow / SW Delivery Ilimitado', price: 500 },
+
+  { name: 'Totem de Autoatendimento', price: 150 },
+  { name: 'Kitchen Display System', price: 50 },
+  { name: 'Integração Cardápio Digital Goomer', price: 100 },
+
+  { name: 'API de Dados por loja', price: 60 },
   { name: 'Painel de Senha', price: 35 },
   { name: 'TEF 1ª Licença', price: 130 },
   { name: 'TEF adicional', price: 50 },
-  { name: 'Totem de Autoatendimento', price: 150 },
-  { name: 'Integração Cardápio Digital Goomer', price: 100 },
-  { name: 'Implantação', price: 900 }
+
+  { name: 'Swnow / SW Delivery Ilimitado', price: 500 },
+
+  { name: 'SW Engajamento Start', price: 110 },
+  { name: 'SW Engajamento Business', price: 235 }
 ];
 
 const els = {
@@ -88,7 +94,32 @@ function getClient(){
   return (els.clientName.value.trim() || 'A DEFINIR').toUpperCase();
 }
 
+function hasDiscount(){
+  return quote.items.some(item => item.type === 'discount');
+}
+
+function updateItemLock(){
+  const locked = hasDiscount();
+
+  els.catalogItem.disabled = locked;
+  els.itemQty.disabled = locked;
+  els.customDesc.disabled = locked;
+  els.customValue.disabled = locked;
+  els.addItem.disabled = locked;
+  els.addImplantacao.disabled = locked;
+
+  els.addItem.textContent = locked ? 'Itens bloqueados após desconto' : 'Adicionar item';
+  els.addImplantacao.textContent = locked ? 'Implantação bloqueada após desconto' : 'Adicionar implantação R$ 900,00';
+
+  [els.catalogItem, els.itemQty, els.customDesc, els.customValue, els.addItem, els.addImplantacao]
+    .forEach(el => el.classList.toggle('locked', locked));
+}
+
 function addCatalogItem(){
+  if(hasDiscount()){
+    alert('Após adicionar desconto, a inserção de novos itens fica bloqueada. Remova o desconto ou limpe o orçamento para alterar os itens.');
+    return;
+  }
   const qty = Math.max(1, Number(els.itemQty.value || 1));
   const customDesc = els.customDesc.value.trim();
   const customValue = Number(els.customValue.value);
@@ -120,6 +151,10 @@ function addCatalogItem(){
 }
 
 function addImplantacao(){
+  if(hasDiscount()){
+    alert('Após adicionar desconto, a inserção de novos itens fica bloqueada. Remova o desconto ou limpe o orçamento para alterar os itens.');
+    return;
+  }
   addItem({
     store: '',
     description: 'Implantação',
@@ -226,6 +261,7 @@ function render(){
     quote.notes.split('\n').filter(Boolean).forEach(n => notes.push(n));
   }
   els.notesList.innerHTML = notes.map(n => `<li>- ${n}</li>`).join('');
+  updateItemLock();
 }
 
 function whatsappText(){

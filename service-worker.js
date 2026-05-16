@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orcamentos-013-modelo-marabar-print-v2';
+const CACHE_NAME = 'orcamentos-013-pdv-abaixo-gestao-v12';
 const ASSETS = [
   './',
   './index.html',

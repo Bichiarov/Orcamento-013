@@ -420,3 +420,15 @@ input:focus,select:focus,textarea:focus{
     break-inside:avoid!important;
   }
 }
+
+
+.locked{
+  opacity:.55!important;
+  cursor:not-allowed!important;
+}
+
+button.locked{
+  background:#303943!important;
+  color:#9da9b5!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+}
