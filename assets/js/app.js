@@ -44,7 +44,8 @@ const els = {
   implantacaoTotal: document.querySelector('#implantacaoTotal'),
   btnPrint: document.querySelector('#btnPrint'),
   btnWhats: document.querySelector('#btnWhats'),
-  btnRemoveLast: document.querySelector('#btnRemoveLast')
+  btnRemoveLast: document.querySelector('#btnRemoveLast'),
+  btnServiceWhats: document.querySelector('#btnServiceWhats')
 };
 
 let quote = {
@@ -441,6 +442,58 @@ async function shareWhatsapp(){
   }
 }
 
+
+function serviceOrderText(){
+  const total = quote.items.reduce((sum, i) => sum + i.total, 0);
+  const lines = [
+    '*ORDEM DE SERVIÇO — 013 AUTOMAÇÃO*',
+    '',
+    `*Data:* ${formatDate(quote.date)}`,
+    quote.client ? `*Cliente:* ${quote.client}` : '',
+    '',
+    '*Serviços / Itens:*'
+  ].filter(Boolean);
+
+  if(quote.items.length === 0){
+    lines.push('- Nenhum item adicionado.');
+  }
+
+  quote.items.forEach(i => {
+    lines.push(`- ${i.description} | Qtde: ${i.qty} | Valor: ${money(i.total)}`);
+  });
+
+  const implantationTotal = quote.items
+    .filter(i => i.type === 'implantacao' || (i.type === 'discount' && i.description.toLowerCase().includes('implant')))
+    .reduce((sum, i) => sum + i.total, 0);
+
+  if(quote.items.some(i => i.type === 'implantacao' || i.description.toLowerCase().includes('implant'))){
+    lines.push('');
+    lines.push(`*Total implantação:* ${money(implantationTotal)}`);
+  }
+
+  lines.push('');
+  lines.push(`*Total:* ${money(total)}`);
+
+  if(quote.notes){
+    lines.push('');
+    lines.push('*Observações:*');
+    quote.notes.split('\n').filter(Boolean).forEach(n => lines.push(`- ${n}`));
+  }
+
+  lines.push('');
+  lines.push('*013 Automação Comercial*');
+  lines.push('Alex: (13) 98822-9261 | Rafael: (13) 98821-5842');
+  lines.push('suporte@013automacao.com.br | comercial@013automacao.com.br');
+  lines.push('www.013automacao.com.br');
+
+  return lines.join('\n');
+}
+
+function sendServiceOrderWhatsapp(){
+  const text = encodeURIComponent(serviceOrderText());
+  window.open(`https://wa.me/?text=${text}`, '_blank');
+}
+
 function clearQuote(){
   if(!confirm('Limpar este orçamento?')) return;
   quote.items = [];
@@ -470,6 +523,9 @@ function bind(){
     window.scrollTo(0, 0);
     setTimeout(() => window.print(), 120);
   });
+  if(els.btnServiceWhats){
+    els.btnServiceWhats.addEventListener('click', sendServiceOrderWhatsapp);
+  }
   els.btnRemoveLast.addEventListener('click', () => {
     quote.items.pop();
     render();

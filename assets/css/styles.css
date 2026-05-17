@@ -561,3 +561,16 @@ html, body{
     margin-bottom:-194mm;
   }
 }
+
+
+/* Botão OS WhatsApp */
+.final-actions .os-whats{
+  grid-column:1 / -1;
+  background:linear-gradient(135deg,#1fb56f,#128c54);
+}
+
+@media(max-width:760px){
+  .final-actions .os-whats{
+    grid-column:1 / -1;
+  }
+}
