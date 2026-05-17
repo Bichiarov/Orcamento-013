@@ -490,8 +490,7 @@ function serviceOrderText(){
 }
 
 function sendServiceOrderWhatsapp(){
-  const text = encodeURIComponent(serviceOrderText());
-  window.open(`https://wa.me/?text=${text}`, '_blank');
+  shareWhatsapp();
 }
 
 function clearQuote(){
