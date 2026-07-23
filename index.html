@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=18" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=19" />
 </head>
 <body>
   <div class="app-shell">
@@ -124,14 +124,16 @@
             <tbody id="quoteRows"></tbody>
           </table>
 
-          <div id="implantacaoLine" class="implantacao-line hidden">
-            <strong>Total implantação:</strong>
-            <span id="implantacaoTotal">R$ 0,00</span>
-          </div>
+          <div class="totals-area">
+            <div id="implantacaoBox" class="total-box implantation-total hidden">
+              <strong>TOTAL IMPLANTAÇÃO</strong>
+              <span id="implantacaoTotal">R$ 0,00</span>
+            </div>
 
-          <div class="total-box">
-            <strong>TOTAL</strong>
-            <span id="quoteTotal">R$ 0,00</span>
+            <div class="total-box monthly-total">
+              <strong>TOTAL MENSAL</strong>
+              <span id="quoteTotal">R$ 0,00</span>
+            </div>
           </div>
 
           <div class="notes">
@@ -152,6 +154,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="assets/js/app.js?v=18"></script>
+  <script src="assets/js/app.js?v=19"></script>
 </body>
 </html>

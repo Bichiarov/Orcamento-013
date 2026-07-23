@@ -574,3 +574,45 @@ html, body{
     grid-column:1 / -1;
   }
 }
+
+
+/* Totais separados: mensalidade recorrente e implantação única */
+.totals-area{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:8px;
+  margin-top:10px;
+}
+
+.totals-area .total-box{
+  margin:0;
+  width:92mm;
+}
+
+.implantation-total{
+  background:#1b2733;
+  border:1px solid #159bd7;
+}
+
+.implantation-total span{
+  color:#6ee7a0;
+}
+
+.monthly-total{
+  background:#000;
+}
+
+@media(max-width:760px){
+  .totals-area .total-box{
+    width:92mm;
+  }
+}
+
+@media print{
+  .totals-area,
+  .totals-area .total-box{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+}

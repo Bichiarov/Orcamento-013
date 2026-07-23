@@ -40,7 +40,7 @@ const els = {
   quoteTotal: document.querySelector('#quoteTotal'),
   pvDate: document.querySelector('#pvDate'),
   notesList: document.querySelector('#notesList'),
-  implantacaoLine: document.querySelector('#implantacaoLine'),
+  implantacaoBox: document.querySelector('#implantacaoBox'),
   implantacaoTotal: document.querySelector('#implantacaoTotal'),
   btnPrint: document.querySelector('#btnPrint'),
   btnWhats: document.querySelector('#btnWhats'),
@@ -231,15 +231,21 @@ function render(){
     els.quoteRows.appendChild(tr);
   });
 
-  const total = quote.items.reduce((sum, i) => sum + i.total, 0);
-  els.quoteTotal.textContent = money(total);
-
   const implantationTotal = quote.items
     .filter(i => i.type === 'implantacao' || (i.type === 'discount' && i.description.toLowerCase().includes('implant')))
     .reduce((sum, i) => sum + i.total, 0);
 
-  const hasImplantationLine = quote.items.some(i => i.type === 'implantacao' || i.description.toLowerCase().includes('implant'));
-  els.implantacaoLine.classList.toggle('hidden', !hasImplantationLine);
+  const monthlyTotal = quote.items
+    .filter(i => i.type === 'item' || (i.type === 'discount' && !i.description.toLowerCase().includes('implant')))
+    .reduce((sum, i) => sum + i.total, 0);
+
+  els.quoteTotal.textContent = money(monthlyTotal);
+
+  const hasImplantation = quote.items.some(
+    i => i.type === 'implantacao' || (i.type === 'discount' && i.description.toLowerCase().includes('implant'))
+  );
+
+  els.implantacaoBox.classList.toggle('hidden', !hasImplantation);
   els.implantacaoTotal.textContent = money(implantationTotal);
 
   const notes = defaultNotes();
@@ -251,36 +257,16 @@ function render(){
 }
 
 function whatsappText(){
-  const total = quote.items.reduce((sum, i) => sum + i.total, 0);
-  const lines = [
-    '*ORÇAMENTO COMERCIAL*',
-    '',
-    `*Data:* ${formatDate(quote.date)}`,
-    quote.client ? `*Cliente:* ${quote.client}` : '',
-    '',
-    '*ITENS DO ORÇAMENTO*'
-  ].filter(Boolean);
-
-  quote.items.forEach(i => {
-    lines.push('');
-    if(i.store) lines.push(`Loja: *${i.store}*`);
-    lines.push(`Descrição: *${i.description}*`);
-    lines.push(`Qtde: ${i.qty}`);
-    lines.push(`Valor unit.: ${money(i.unit)}`);
-    lines.push(`Valor total: ${money(i.total)}`);
-  });
-
-  const implantationTotal = quote.items
-    .filter(i => i.type === 'implantacao' || (i.type === 'discount' && i.description.toLowerCase().includes('implant')))
-    .reduce((sum, i) => sum + i.total, 0);
-
   if(quote.items.some(i => i.type === 'implantacao' || i.description.toLowerCase().includes('implant'))){
     lines.push('');
     lines.push(`*Total implantação:* ${money(implantationTotal)}`);
   }
 
   lines.push('');
-  lines.push(`*TOTAL: ${money(total)}*`);
+  lines.push(`*TOTAL MENSAL: ${money(monthlyTotal)}*`);
+  if(quote.items.some(i => i.type === 'implantacao' || i.description.toLowerCase().includes('implant'))){
+    lines.push(`*TOTAL IMPLANTAÇÃO: ${money(implantationTotal)}*`);
+  }
   lines.push('');
   lines.push('*Observações:*');
   defaultNotes().forEach(n => lines.push(`- ${n}`));
@@ -444,7 +430,9 @@ async function shareWhatsapp(){
 
 
 function serviceOrderText(){
-  const total = quote.items.reduce((sum, i) => sum + i.total, 0);
+  const monthlyTotal = quote.items
+    .filter(i => i.type === 'item' || (i.type === 'discount' && !i.description.toLowerCase().includes('implant')))
+    .reduce((sum, i) => sum + i.total, 0);
   const lines = [
     '*ORDEM DE SERVIÇO — 013 AUTOMAÇÃO*',
     '',
@@ -472,7 +460,7 @@ function serviceOrderText(){
   }
 
   lines.push('');
-  lines.push(`*Total:* ${money(total)}`);
+  lines.push(`*Total mensal:* ${money(monthlyTotal)}`);
 
   if(quote.notes){
     lines.push('');
