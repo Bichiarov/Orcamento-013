@@ -129,6 +129,7 @@ function addCatalogItem(){
     type: 'item'
   });
 
+  els.catalogItem.value = '';
   els.customDesc.value = '';
   els.customValue.value = '';
   els.itemQty.value = 1;
@@ -140,7 +141,34 @@ function addImplantacao(){
     return;
   }
 
-  addItem({
+  const selected = catalog[Number(els.catalogItem.value)];
+  const customDesc = els.customDesc.value.trim();
+  const customValue = Number(els.customValue.value);
+  const hasPendingItem = Boolean(selected || customDesc || (Number.isFinite(customValue) && customValue > 0));
+
+  if(hasPendingItem){
+    const qty = Math.max(1, Number(els.itemQty.value || 1));
+    const desc = customDesc || (selected ? selected.name : '');
+    const price = Number.isFinite(customValue) && customValue > 0
+      ? customValue
+      : (selected ? selected.price : null);
+
+    if(!desc || price === null){
+      alert('Para incluir o produto junto com a implantação, selecione um item completo ou informe descrição e valor.');
+      return;
+    }
+
+    quote.items.push({
+      store: getClient(),
+      description: desc,
+      qty,
+      unit: price,
+      total: qty * price,
+      type: 'item'
+    });
+  }
+
+  quote.items.push({
     store: '',
     description: 'Implantação',
     qty: 1,
@@ -148,6 +176,13 @@ function addImplantacao(){
     total: 900,
     type: 'implantacao'
   });
+
+  els.catalogItem.value = '';
+  els.customDesc.value = '';
+  els.customValue.value = '';
+  els.itemQty.value = 1;
+
+  render();
 }
 
 function addDiscount(){
