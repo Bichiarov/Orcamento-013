@@ -616,3 +616,11 @@ html, body{
     page-break-inside:avoid!important;
   }
 }
+
+
+/* Desconto exclusivo da implantação */
+#discountDesc[readonly]{
+  color:#9fb1c2;
+  background:#101820;
+  cursor:not-allowed;
+}

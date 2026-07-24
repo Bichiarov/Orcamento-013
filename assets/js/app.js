@@ -141,31 +141,10 @@ function addImplantacao(){
     return;
   }
 
-  const selected = catalog[Number(els.catalogItem.value)];
-  const customDesc = els.customDesc.value.trim();
-  const customValue = Number(els.customValue.value);
-  const hasPendingItem = Boolean(selected || customDesc || (Number.isFinite(customValue) && customValue > 0));
-
-  if(hasPendingItem){
-    const qty = Math.max(1, Number(els.itemQty.value || 1));
-    const desc = customDesc || (selected ? selected.name : '');
-    const price = Number.isFinite(customValue) && customValue > 0
-      ? customValue
-      : (selected ? selected.price : null);
-
-    if(!desc || price === null){
-      alert('Para incluir o produto junto com a implantação, selecione um item completo ou informe descrição e valor.');
-      return;
-    }
-
-    quote.items.push({
-      store: getClient(),
-      description: desc,
-      qty,
-      unit: price,
-      total: qty * price,
-      type: 'item'
-    });
+  const alreadyAdded = quote.items.some(item => item.type === 'implantacao');
+  if(alreadyAdded){
+    alert('A taxa de implantação já foi adicionada ao orçamento.');
+    return;
   }
 
   quote.items.push({
@@ -177,32 +156,48 @@ function addImplantacao(){
     type: 'implantacao'
   });
 
-  els.catalogItem.value = '';
-  els.customDesc.value = '';
-  els.customValue.value = '';
-  els.itemQty.value = 1;
-
   render();
 }
 
 function addDiscount(){
-  const desc = els.discountDesc.value.trim() || 'Desconto';
+  const implantation = quote.items.find(item => item.type === 'implantacao');
+
+  if(!implantation){
+    alert('Adicione primeiro a taxa de implantação para aplicar o desconto.');
+    return;
+  }
+
+  const existingDiscount = quote.items.find(
+    item => item.type === 'discount' && item.description === 'Desconto Implantação'
+  );
+
+  if(existingDiscount){
+    alert('O desconto de implantação já foi adicionado.');
+    return;
+  }
+
   const value = Number(els.discountValue.value);
+
   if(!Number.isFinite(value) || value <= 0){
-    alert('Informe o valor do desconto.');
+    alert('Informe o valor do desconto de implantação.');
+    return;
+  }
+
+  if(value > implantation.total){
+    alert(`O desconto não pode ser maior que ${money(implantation.total)}.`);
     return;
   }
 
   addItem({
-    store: '',
-    description: desc,
+    store: getClient(),
+    description: 'Desconto Implantação',
     qty: 1,
     unit: -Math.abs(value),
     total: -Math.abs(value),
     type: 'discount'
   });
 
-  els.discountDesc.value = '';
+  els.discountDesc.value = 'Desconto Implantação';
   els.discountValue.value = '';
 }
 
@@ -521,6 +516,7 @@ function clearQuote(){
   quote.items = [];
   els.clientName.value = '';
   els.extraNotes.value = '';
+  els.discountDesc.value = 'Desconto Implantação';
   els.quoteDate.value = todayISO();
   render();
 }
