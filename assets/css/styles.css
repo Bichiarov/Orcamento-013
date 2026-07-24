@@ -175,7 +175,12 @@ input:focus,select:focus,textarea:focus{
 .quote-table th:nth-child(3),.quote-table td:nth-child(3){width:9%;text-align:center}
 .quote-table th:nth-child(4),.quote-table td:nth-child(4){width:15%;text-align:right}
 .quote-table th:nth-child(5),.quote-table td:nth-child(5){width:15%;text-align:right}
-.quote-table .discount td{background:#e9f7ea;color:#16743c;font-weight:900}
+.quote-table .discount td{
+  background:#fde8e8;
+  color:#c62828;
+  font-weight:900;
+  border-color:#efb5b5;
+}
 .quote-table .implantacao td{background:#fff}
 .empty-row td{text-align:center!important;color:#8a939d;padding:16px!important}
 
@@ -618,9 +623,46 @@ html, body{
 }
 
 
-/* Desconto exclusivo da implantação */
-#discountDesc[readonly]{
-  color:#9fb1c2;
-  background:#101820;
-  cursor:not-allowed;
+
+
+
+/* Seletor de destino do desconto */
+#discountItem{
+  width:100%;
+}
+
+
+/* Desconto por item lançado */
+#discountItem{
+  width:100%;
+}
+
+
+/* Descontos em vermelho */
+.quote-table tr.discount td{
+  background:#fde8e8!important;
+  color:#c62828!important;
+  font-weight:900!important;
+  border-color:#efb5b5!important;
+}
+
+.quote-table tr.discount td:nth-child(4),
+.quote-table tr.discount td:nth-child(5){
+  color:#b71c1c!important;
+}
+
+@media print{
+  .quote-table tr.discount td{
+    background:#fde8e8!important;
+    color:#c62828!important;
+    border-color:#efb5b5!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+}
+
+
+/* Valor da implantação em branco */
+.implantation-total span{
+  color:#ffffff!important;
 }
