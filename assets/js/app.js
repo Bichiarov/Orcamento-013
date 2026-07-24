@@ -169,7 +169,7 @@ function addImplantacao(){
   }
 
   quote.items.push({
-    store: '',
+    store: getClient(),
     description: 'Implantação',
     qty: 1,
     unit: 900,
